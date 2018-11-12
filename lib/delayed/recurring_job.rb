@@ -1,8 +1,4 @@
-#
 # Delayed::RecurringJob
-#
-# Inspired by https://gist.github.com/ginjo/3688965
-#
 module Delayed
   module RecurringJob
     def self.included(base)
@@ -36,17 +32,15 @@ module Delayed
         priority: self.class.priority,
         queue: self.class.queue
       )
-
       enqueue_opts = { priority: @schedule_options[:priority], run_at: next_run_time }
       enqueue_opts[:queue] = @schedule_options[:queue] if @schedule_options[:queue]
 
-      Delayed::Job.transaction do
-        self.class.jobs(@schedule_options).destroy_all
-        if Gem.loaded_specs['delayed_job'].version.to_s.first.to_i < 3
-          Delayed::Job.enqueue self, enqueue_opts[:priority], enqueue_opts[:run_at]
-        else
-          Delayed::Job.enqueue self, enqueue_opts
-        end
+      self.class.jobs(@schedule_options).destroy_all
+
+      if Gem.loaded_specs['delayed_job'].version.to_s.first.to_i < 3
+        Delayed::Job.enqueue self, enqueue_opts[:priority], enqueue_opts[:run_at]
+      else
+        Delayed::Job.enqueue self, enqueue_opts
       end
     end
 
@@ -162,15 +156,13 @@ module Delayed
       # Show all jobs for this schedule
       def jobs(options = {})
         options = options.with_indifferent_access
-
         # Construct dynamic query with 'job_matching_param' if present
-        query = ["((handler LIKE ?) OR (handler LIKE ?))", "--- !ruby/object:#{name} %", "--- !ruby/object:#{name}\n%"]
+        query = {'$or' => [{handler: /--- !ruby\/object:#{name}[\s+]/}, {handler: /--- !ruby\/object:#{name}$/}]}
         if options[:job_matching_param].present?
           matching_key = options[:job_matching_param]
           matching_value = options[matching_key]
           matching_yaml = yaml_quote(matching_value)
-          query[0] = "#{query[0]} AND handler LIKE ?"
-          query << "%#{matching_key}: #{matching_yaml}%"
+          query = {'$and' => [query, handler: /#{matching_key}: #{matching_yaml}/]}
         end
 
         ::Delayed::Job.where(query)

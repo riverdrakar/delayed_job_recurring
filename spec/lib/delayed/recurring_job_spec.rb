@@ -138,7 +138,7 @@ describe Delayed::RecurringJob do
           at '2014-03-08T12:00:00' do
             job = MyTaskWithZone.schedule(run_at: dt('2014-03-08T11:00:00'))
             expect(job.run_at.to_datetime).to eq dt('2014-03-09T10:00:00')
-          end         
+          end
         end
 
         it 'can accept days of the week' do
@@ -164,7 +164,7 @@ describe Delayed::RecurringJob do
 
           jobs = Delayed::Job.all
           expect(jobs.count).to eq 1
-          expect(jobs.first.run_at.to_datetime).to eq dt('2014-03-09T10:00:00')                   
+          expect(jobs.first.run_at.to_datetime).to eq dt('2014-03-09T10:00:00')
         end
       end
     end
@@ -235,7 +235,7 @@ describe Delayed::RecurringJob do
       end
 
       after do
-        Delayed::Worker.max_attempts = @prev_max_attempts 
+        Delayed::Worker.max_attempts = @prev_max_attempts
       end
 
       context 'after all attempts have been exhausted' do

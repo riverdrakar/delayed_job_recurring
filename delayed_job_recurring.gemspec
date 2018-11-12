@@ -1,16 +1,16 @@
 require 'date'
 
 Gem::Specification.new do |s|
-  s.name        = 'delayed_job_recurring'
+  s.name        = 'delayed_job_recurring_mongoid_uriji'
   s.version     = '0.3.8'
   s.date        = Date.today.to_s
-  s.summary     = "Recurring jobs for delayed_job"
-  s.description = "Extends delayed_job to support recurring jobs, including timezone support"
+  s.summary     = "Recurring jobs for delayed_job_mongoid"
+  s.description = "Extends delayed_job_mongoid to support recurring jobs, including timezone support"
   s.authors     = ["Tony Novak"]
   s.email       = 'engineering@amitree.com'
   s.files       = Dir.glob("{bin,lib}/**/*") + %w(LICENSE README.md)
 
-  s.homepage    = 'https://github.com/amitree/delayed_job_recurring'
+  s.homepage    = 'https://github.com/riverdrakar/delayed_job_recurring'
   s.license     = 'MIT'
 
   s.required_ruby_version = '> 1.9'
@@ -24,5 +24,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'timecop', '~> 0.7.1'
 
   s.add_runtime_dependency 'delayed_job', '>= 3.0'
-  s.add_runtime_dependency 'delayed_job_active_record'
+  s.add_runtime_dependency 'delayed_job_mongoid', '>= 2.0'
 end
